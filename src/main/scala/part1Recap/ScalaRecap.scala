@@ -8,9 +8,13 @@ object ScalaRecap extends App {
 
   println("Hi")
 
-  val a:Int = 2
+  // everything is an expression in Scala
+  // i.e. they are evaluated to a value
+  // we cannot write just a if statement without the else
+  val a: String = if (2 < 3) "it's true" else "false!!"
 
-  //test commit
+  val b: Int = 2
+  println(b)
 
   // Futures
   val aFuture = Future {
