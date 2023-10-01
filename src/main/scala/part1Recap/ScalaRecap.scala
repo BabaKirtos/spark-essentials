@@ -10,6 +10,8 @@ object ScalaRecap extends App {
 
   val a:Int = 2
 
+  //test commit
+
   // Futures
   val aFuture = Future {
     // some expensive computation which runs on another thread
