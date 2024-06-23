@@ -1,6 +1,6 @@
 package part1Recap
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.language.implicitConversions
@@ -9,6 +9,12 @@ object ScalaRecap extends App {
 
   println("Hi")
 
+  // value and variables
+  val anImmutableValue: Int = 5 // immutable value, no reassignment
+  var aMutableVariable: Int = 8 // mutable variable, can be reassigned
+  println(anImmutableValue)
+  println(aMutableVariable)
+
   // instructions vs expressions
   // instructions return nothing (Unit in Scala)
   // expressions are evaluated to a value
@@ -16,7 +22,7 @@ object ScalaRecap extends App {
   // i.e. they are evaluated to a value
   // we cannot write just an `if` statement without the else
   val a: String = if (2 < 3) "it's true" else "false!!"
-  println(a)
+  println(a) // println returns unit
 
   // functions
   def myInt(x: Int) = x.toString
@@ -54,6 +60,7 @@ object ScalaRecap extends App {
     val whoAmI = s"I'm the only instance of ${Singleton.toString}!!"
   }
   println(Singleton.whoAmI)
+
   // Companion Object
   object Carnivore {
     def singleMethod: String = s"I'm Companion of Carnivore, and avialable to all instances of Carnivore"
@@ -68,21 +75,36 @@ object ScalaRecap extends App {
   println(1.+(2))
 
   // Functional programming
-  val incrementer = (x: Int) => x + 1
+  val oldIncrementer: Int => Int = x => x + 1
+  val oldIncremented = oldIncrementer(42)
+  println(oldIncremented)
+
+  val incrementer = (x: Int) => x + 1 // same as oldIncrementer, with sugar
   val incremented = incrementer(40)
   println(incremented)
 
+  // map, flatMap, filters are HoFs, as they takes function as a parameter
   val processedList = List(1, 2, 3, 4).map(incrementer)
   println(processedList)
 
   // Pattern Matching
-  val unknown: Any = 45
+  val unknown: Any = "Hi"
   val ordinal = unknown match {
     case _: Int    => "It's an Int"
     case _: String => "It's a String"
     case _         => "It's something else"
   }
   println(ordinal)
+
+  // Type erasure issue with pattern matching
+  // List[Any], List[Int], List[String] all become List due to type erasure
+  def processList(list: List[Any]): String = list match {
+    case _: List[Int] => "List of Int"
+    case _: List[String] => "List of Strings"
+    case _ => "Unknown List"
+  }
+  println(processList(List("a", "b", "c"))) // Will print "List of Int"
+
 
   // try-catch
   val throwIt = try {
@@ -93,6 +115,14 @@ object ScalaRecap extends App {
   }
   println(throwIt)
 
+  // Using Try
+  val aTry = Try(throw new NullPointerException("I AM NULL POINTER EXCEPTION!!"))
+  val result = aTry match {
+    case Success(_) => "It was successful"
+    case Failure(e) => s"Found the following error: ${e.getMessage}"
+  }
+  println(result)
+
   // Futures
   val aFuture = Future {
     // some expensive computation which runs on another thread
@@ -100,12 +130,14 @@ object ScalaRecap extends App {
   }
   aFuture.onComplete {
     case Success(value) => println(s"$value")
-    case Failure(exception) => println(s"${exception.getMessage}")
+    case Failure(ex) => println(s"${ex.getMessage}")
   }
 
   // Partial Functions
   val aPartial: PartialFunction[Int, Int] = {
     case 1 => 45
+    case 2 => 67
+    case 3 => 89
     case _ => 0
   }
   val appliedFunction = (x: Int) => aPartial(x)
@@ -116,7 +148,8 @@ object ScalaRecap extends App {
   def methodWithImplicit(implicit x:Int) =  x + 1
   implicit val implicitInt: Int = 67
   // compiler will automatically inject the argument as 67
-  println(methodWithImplicit)
+  val implicitCall = methodWithImplicit
+  println(implicitCall)
 
   // Implicit Conversions - implicit def
   case class Person(name: String) {
