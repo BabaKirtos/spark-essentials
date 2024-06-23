@@ -1,6 +1,7 @@
 package part2SparkBasics
 
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.LongType
 
 object L1DataFramesBasics extends App {
 
@@ -23,6 +24,7 @@ object L1DataFramesBasics extends App {
   // get rows
   firstDf.take(10).foreach(println)
 
-
+  // spark types
+  val longType = LongType
 
 }
