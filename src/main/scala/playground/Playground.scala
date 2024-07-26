@@ -1,5 +1,6 @@
 package playground
 
+import org.apache.spark.sql.functions.{col, desc}
 import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types._
 
@@ -84,5 +85,26 @@ object Playground extends App {
   val output = personDs.take(3)
 
   output.foreach(println)
+
+  // exchangeId , stockName, stockPrice, eventTimestamp
+  // given london stock exchange on 19th JULY, find the name of the stock having highest price
+  val inputData = Seq(
+    (100, "Raju", 5, 8.1D, Seq("Maths", "Hindi", "English")),
+    (101, "Ram", 11, 7.5D, Seq("Maths", "Phy", "Chem")),
+    (102, "Arun", 10, 7.2D, Seq("Maths", "Phy", "Chem")),
+    (103, "Neha", 11, 7.6D, Seq("Bio", "Chem", "English")),
+    (104, "Swati", 12, 7.5D, Seq("Maths", "Chem", "English")),
+    (105, "Varun", 12, 7.7D, Seq("Maths", "Chem", "English", "Phy", "CS")))
+
+  val df = spark.createDataFrame(inputData)
+
+  df.show()
+  df.printSchema()
+
+  df.selectExpr("_2 as name").filter(col("_5").cast(StringType).contains("Maths") && col("_5").cast(StringType).contains("English")).show()
+
+  val input = Seq((123, "25-07-2024T01:00:00Z", "25-07-2024T04:00:00Z"), (124, "25-07-2024T02:00:00Z", "25-07-2024T08:00:00Z"))
+
+  val newDf = spark.createDataFrame(input)
 
 }
