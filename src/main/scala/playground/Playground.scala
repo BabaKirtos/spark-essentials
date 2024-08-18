@@ -101,4 +101,20 @@ object Playground extends App {
 
   df.select("name", "cgpa").filter(array_contains(col("subjects"), "Bio") || array_contains(col("subjects"), "English")).show()
 
+  //Q. I want to find only those customer names whose all the phone numbers are active
+  //
+  //custname  number  status
+  //A          1      Active
+  //B          2      Inactive
+  //A          3      Inactive
+  //C          4      Active
+  //C          5      Active
+
+  // assuming that we have a df
+  //    val countDf = df.select("custname", "status").withColumn("flag", when(col("status") == "Active", 1).otherwise(0))
+  //
+  //    val interDf = countDf.groupBy("custname").agg(sum("flag").alias("active_count"), count("custname").alias("cust_count"))
+  //
+  //    val outputDf = interDf.select("custname").where("active_count = cust_count")
+
 }
