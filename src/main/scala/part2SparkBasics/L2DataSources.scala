@@ -57,7 +57,7 @@ object L2DataSources extends App {
     - path
     - zero or more options
    */
-  // Without the coalesce, we will have 10 json files
+  // Without coalesce, we will have 10 json files
   carsDF.coalesce(1).write
     .format("json")
     .mode(SaveMode.Overwrite)
