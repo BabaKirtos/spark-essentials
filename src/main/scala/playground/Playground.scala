@@ -1,8 +1,10 @@
 package playground
 
-import org.apache.spark.sql.functions.{array_contains, col, desc, lit}
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.functions.{array_contains, avg, col}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.{Row, SparkSession}
+
+import scala.language.implicitConversions
 
 /**
  * This is a small application that loads some manually inserted rows into a Spark DataFrame.
@@ -87,7 +89,7 @@ object Playground extends App {
   output.foreach(println)
 
   // exchangeId , stockName, stockPrice, eventTimestamp
-  // given london stock exchange on 19th JULY, find the name of the stock having highest price
+  // given london stock exchange on 19th JULY, find the name of the stock having the highest price
   val df = Seq(
     (100, "Raju", 5, 8.1D, Seq("Maths", "Hindi", "English")),
     (101, "Ram", 11, 7.5D, Seq("Maths", "Phy", "Chem")),
@@ -117,4 +119,38 @@ object Playground extends App {
   //
   //    val outputDf = interDf.select("custname").where("active_count = cust_count")
 
+  import org.apache.spark.sql.{Dataset, Encoder, TypedColumn}
+
+  class RichDataSetOps[T](ds: Dataset[T]) {
+
+    // A HoF for performing a grouping by key and aggregation (e.g., sum, avg)
+    def groupByKeyAndAgg[K, U](keySelector: T => K, aggFunc: TypedColumn[T, U])(implicit encK: Encoder[K]): Dataset[(K, U)] = {
+      ds.groupByKey(keySelector).agg(aggFunc)
+    }
+  }
+
+  object RichDataSetOps {
+    // Implicit conversion to enrich the Dataset with the RichDataSetOps methods
+    implicit def toRichDataSet[T](ds: Dataset[T]): RichDataSetOps[T] = new RichDataSetOps(ds)
+  }
+
+  import RichDataSetOps._ // Import the implicit conversion
+
+  // Sample data
+  val people = Seq(
+    Person1("Alice", 30, 50000),
+    Person1("Bob", 28, 45000),
+    Person1("Charlie", 35, 60000),
+    Person1("David", 40, 70000),
+    Person1("Eve", 30, 55000)
+  )
+
+  val ds: Dataset[Person1] = people.toDS()
+
+  // Example 4: Group by age and compute the average salary
+  val avgSalaryByAge = ds.groupByKeyAndAgg(_.age, avg($"salary").as[Double])
+  avgSalaryByAge.show()
 }
+
+case class Person1(name: String, age: Int, salary: Double)
+

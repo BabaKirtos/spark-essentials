@@ -6,9 +6,9 @@ import scala.reflect.ClassTag
 
 object TypedEncodersSample extends App {
 
-  //  class MyObj(val i: Int)
-  //  implicit val myObjEncoder = org.apache.spark.sql.Encoders.kryo[MyObj]
-  //  val d = spark.createDataset(Seq(new MyObj(1),new MyObj(2),new MyObj(3)))
+  //    class MyObj(val i: Int)
+  //    implicit val myObjEncoder = org.apache.spark.sql.Encoders.kryo[MyObj]
+  //    val d = spark.createDataset(Seq(new MyObj(1),new MyObj(2),new MyObj(3)))
 
   implicit def single[A](implicit c: ClassTag[A]): Encoder[A] = Encoders.kryo[A](c)
 
