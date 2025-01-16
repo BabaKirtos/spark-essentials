@@ -83,7 +83,7 @@ object L1DataFramesBasics extends App {
 
   import spark.implicits._
 
-  val manualCarsDFWithImplicis = cars.toDF(
+  val manualCarsDFWithImplicits = cars.toDF(
     "Name",
     "Miles_per_Gallon",
     "Cylinders",
@@ -94,20 +94,20 @@ object L1DataFramesBasics extends App {
     "Year",
     "Origin")
 
-  manualCarsDFWithImplicis.show()
+  manualCarsDFWithImplicits.show()
 
-  // Lets check schemas for both
+  // Let's check schemas for both
   manualCarsDF.printSchema()
-  manualCarsDFWithImplicis.printSchema()
+  manualCarsDFWithImplicits.printSchema()
 
   /*
   Exercise:
-    1. Create a manual DF for Smart Phones
+    1. Create a manual DF for Smartphones
       - make
       - model
       - screen dimension
       - camera megapixels
-    2. Read another file from Data folder - movies.json
+    2. Read another file from the Data folder - movies.json
       - print schema
       - count number of rows
    */
@@ -120,5 +120,4 @@ object L1DataFramesBasics extends App {
 
   moviesDF.printSchema()
   println(moviesDF.count())
-
 }
